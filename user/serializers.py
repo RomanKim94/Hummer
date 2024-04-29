@@ -12,6 +12,7 @@ from user.models import User, RegCode
 
 class UserSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=17)
+    reg_code = serializers.CharField(max_length=4, required=False)
     # class Meta:
     #     model = User
     #     fields = ('phone_number',)
