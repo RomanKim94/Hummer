@@ -4,7 +4,6 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from refsystem.Services import InviteServices
 from refsystem.models import InviteCode, UsedCode
 from user.Services import UserServices
 from user.models import User, RegCode
@@ -68,6 +67,10 @@ class ProvingRegCodeSerializer(serializers.Serializer):
             'access': str(refresh.access_token),
         }
 
+    def create_invite_code(self):
+        code = InviteCode.objects.create(user=self.user, code=UserServices.generate_invite_code(symbol_quantity=6))
+        code.save()
+
 
 class UserDetailSerializer(serializers.ModelSerializer):
     invited_users = serializers.SerializerMethodField()
@@ -79,10 +82,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         fields = ('phone_number', 'invite_code', 'invited_users', 'strange_code')
 
     def get_invite_code(self, obj):
-        invite_code_obj = InviteCode.objects.get_or_create(user=obj, defaults={
-            'code': InviteServices.generate_invite_code(6),
-        })[0]
-        invite_code_obj.save()
+        invite_code_obj = InviteCode.objects.get(user=obj)
         return invite_code_obj.code
 
     def get_invited_users(self, obj):

@@ -37,5 +37,6 @@ class UserViewSet(mixins.RetrieveModelMixin,
             data=request.data
         )
         serializer.is_valid(raise_exception=True)
+        serializer.create_invite_code()
         response_data = serializer.get_auth_tokens()
         return Response(response_data)
