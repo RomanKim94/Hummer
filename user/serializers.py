@@ -66,8 +66,14 @@ class ProvingRegCodeSerializer(serializers.Serializer):
         }
 
     def create_invite_code(self):
-        code = InviteCode.objects.create(user=self.user, code=UserServices.generate_invite_code(symbol_quantity=6))
-        code.save()
+        code, created = InviteCode.objects.get_or_create(
+            user=self.user,
+            defaults={
+                'code': UserServices.generate_invite_code(symbol_quantity=6)
+            }
+        )
+        if created:
+            code.save()
 
 
 class UserDetailSerializer(serializers.ModelSerializer):

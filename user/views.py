@@ -13,33 +13,41 @@ from user.models import User, RegCode
 from user.serializers import UserSerializer, ProvingRegCodeSerializer, UserDetailSerializer
 
 
-class UserDetailViewSet(mixins.RetrieveModelMixin,
-                        GenericViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserDetailSerializer
-
-    @action(detail=True, methods=['GET'], permission_classes=[IsAuthenticated])
-    def me(self, request, pk=None):
-        user = request.user
-        serializer = UserDetailSerializer(user)
-        return Response(serializer.data)
-
-    def get_object(self):
-        phone_number = self.kwargs.get('phone_number')
-        phone_number = UserServices.standardize_phone_number(phone_number)
-        user = User.objects.filter(phone_number=phone_number).first()
-        if user:
-            return user
-        else:
-            raise ValidationError('Пользователя с указанным номером не существует')
+# class UserDetailViewSet(mixins.RetrieveModelMixin,
+#                         GenericViewSet):
+#     queryset = User.objects.all()
+#     serializer_class = UserDetailSerializer
+#
+#     def get_object(self):
+#         phone_number = self.kwargs.get('phone_number')
+#         if phone_number == 'me':
+#             return self.request.user
+#         phone_number = UserServices.standardize_phone_number(phone_number)
+#         user = User.objects.filter(phone_number=phone_number).first()
+#         if user:
+#             return user
+#         raise ValidationError('Пользователя с указанным номером не существует')
 
 
-class UserViewSet(mixins.ListModelMixin,
+class UserViewSet(mixins.RetrieveModelMixin,
+                  mixins.ListModelMixin,
                   GenericViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    lookup_field = 'phone_number'
 
+    def get_serializer_class(self):
+        if self.action == 'retrieve':  # noqa
+            return UserDetailSerializer
+        return UserSerializer
+
+    def get_object(self):
+        phone_number = self.kwargs.get('phone_number')
+        user = self.request.user
+        if phone_number == 'me' and user.is_authenticated:
+            return user
+        return super().get_object()
 
     @action(methods=['POST'], detail=False)
     def send_reg_code(self, request):
