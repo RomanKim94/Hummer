@@ -2,6 +2,8 @@ import random
 import string
 from time import sleep
 
+from rest_framework.exceptions import ValidationError
+
 
 class UserServices:
 
@@ -12,9 +14,9 @@ class UserServices:
             phone_number = '8' + phone_number
         phone_number = ''.join([symbol for symbol in phone_number if symbol.isdigit()])
         if not phone_number or len(phone_number) < 10:
-            raise ValueError('В номере телефона менее 10 цифр')
+            raise ValidationError('В номере телефона менее 10 цифр')
         if not phone_number.startswith('89'):
-            raise ValueError('Номер телефона не принадлежит РФ')
+            raise ValidationError('Номер телефона не принадлежит РФ')
         return phone_number
 
     @staticmethod

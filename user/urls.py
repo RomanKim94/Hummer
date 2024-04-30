@@ -22,11 +22,12 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from user.views import UserViewSet
+from user.views import UserViewSet, UserDetailViewSet
 
 router = DefaultRouter()
 router.register('', UserViewSet, basename='User')
 
 urlpatterns = [
+    path('<str:phone_number>/', UserDetailViewSet.as_view({'get': 'retrieve'})),
     path('', include(router.urls))
 ]

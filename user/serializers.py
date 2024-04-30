@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.utils import timezone
 from rest_framework import serializers
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from refsystem.models import InviteCode, UsedCode
@@ -12,9 +13,6 @@ from user.models import User, RegCode
 class UserSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=17)
     reg_code = serializers.CharField(max_length=4, required=False)
-    # class Meta:
-    #     model = User
-    #     fields = ('phone_number',)
 
     def validate(self, attrs):
         phone_number = attrs.get('phone_number')
