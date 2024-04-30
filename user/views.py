@@ -47,6 +47,7 @@ class UserViewSet(mixins.RetrieveModelMixin,
         user = self.request.user
         if phone_number == 'me' and user.is_authenticated:
             return user
+        self.kwargs['phone_number'] = UserServices.standardize_phone_number(self.kwargs.get('phone_number'))
         return super().get_object()
 
     @action(methods=['POST'], detail=False)

@@ -40,7 +40,9 @@
 ## Реферальная система  
 ### Получение информации о пользователе  
 Метод: `GET`  
-Адрес отправки запроса: ![https://testingdatingapi.pythonanywhere.com/user/ID/](https://testingdatingapi.pythonanywhere.com/user/1/)  
+Адрес отправки запроса: ![https://testingdatingapi.pythonanywhere.com/user/<phone_number>/](https://testingdatingapi.pythonanywhere.com/user/<phone_number>/)  
+Вместо <phone_number> требуется указать номер телефона интересуемого пользователя.  
+Также возможно указать вместо <phone_number> слово "me". В таком случае, ответ будет содержать информацию о текущем пользователе.
 Формат ответа:
 ```
 {
